@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Buyer {
+  id           String        @id @default(uuid())
+  fullName     String
+  email        String?       
+  phone        String
+  city         String
+  propertyType String
+  bhk          String?
+  purpose      String
+  budgetMin    BigInt?
+  budgetMax    BigInt?
+  timeline     String
+  source       String
+  status       String        @default("New")
+  notes        String?
+  tags         String?       @map("tags")
+  ownerId      String
+  updatedAt    DateTime      @updatedAt
+  history      BuyerHistory[]
+
+  // Correctly mapping fields from your project description
+  @@map("buyers")
+}
+
+model BuyerHistory {
+  id        String    @id @default(uuid())
+  buyerId   String
+  buyer     Buyer     @relation(fields: [buyerId], references: [id])
+  changedBy String
+  changedAt DateTime  @default(now())
+  diff      String?
+
+  // Correctly mapping fields from your project description
+  @@map("buyer_history")
+}
